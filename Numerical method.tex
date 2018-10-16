@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+%% Language and font encodings
+\usepackage[english,russian]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+% * <sag050196@gmail.com> 2016-10-31T21:22:54.742Z:
+%
+% ^.
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,mathtools,bm} % AMS
+\usepackage{icomma} 
+\usepackage{tikz}
+\title{Numerical method}
+\author{sag050196 }
+\date{October 2018}
+
+\begin{document}
+
+\maketitle
+
+\section*{1.1}
+
+We have system of PDE
+
+\begin{equation}
+    \left\{
+    \begin{matrix}
+    &\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = 0, & in \,  \Omega \, \\
+    &u|_{\partial\Omega} = \psi, & on \, \partial \Omega 
+    \end{matrix}
+    \right.
+\end{equation}
+
+And $\psi$ is :
+
+\begin{equation}
+\left\{
+\begin{matrix}
+    &\psi(x,0) = 0, & \psi(x,b) = \sin(x)/\sin(a) & x\, from\, [0,a] \\
+    &\psi(0,y) = 0 , & \psi(a,y) = \sinh(y) / \sinh(b) & y\, from \, [0,b]
+    \end{matrix}
+    \right.
+\end{equation}
+
+And if used explicit method
+
+\begin{equation}
+    u_{i, j} = \frac{1}{4} (u_{i+1,j} + u_{i-1,j} + u_{i,j+1} + u_{i,j-1}) 
+\end{equation}
+
+\begin{figure}[h!]
+\centering{\includegraphics[scale=0.4]{1_1_numerical.png}}
+\end{figure}
+
+
+\end{document}
