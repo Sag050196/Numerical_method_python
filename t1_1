@@ -1,0 +1,164 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+import importlib
+import time
+from mpl_toolkits.mplot3d import Axes3D
+
+
+
+#Boundary function
+
+def phix(x):
+    return np.sin(x)/np.sin(a)
+
+def phiy(x):
+    return np.sinh(x)/np.sinh(b)
+
+# Set maximum iteration
+maxIter = 500
+
+# Set size
+
+a = 15
+b = 7
+
+
+m = 40
+n = 50
+# Set Dimension
+lenX = m
+lenY = n
+
+
+# Boundary condition
+Utop = phix
+Ubottom = 0
+Uleft = 0
+Uright = phiy
+
+#Convergence
+#tol = 2*10**(-4)
+
+# Initial guess of interior grid
+Uguess1 = 0
+Uguess2 = 0.7
+# Set colour interpolation and colour map
+colorinterpolation = 50
+colourMap = plt.cm.jet
+ # colourMap = plt.cm.coolwarm
+
+# Set meshgrid
+
+timey = np.linspace(5,lenX,lenX-1-5)
+timex = np.linspace(5,lenX,lenX-1-5)
+ERROR = np.linspace(5,lenX,lenX-1-5)
+ERRORx = np.linspace(5,lenX,lenX-1-5)
+for lenX in range(5,lenX):
+    lenY=lenX
+    # Set meshgrid
+    x = np.linspace(0, a, lenX)
+    y = np.linspace(0, b, lenY)
+    X, Y = np.meshgrid(x, y)
+
+    # Set array size and set the interior value with Tguess
+    U = np.empty((lenY, lenX))
+    Uold = np.empty((lenY, lenX))
+    U1 = np.empty((lenY, lenX))
+    U.fill(Uguess1)
+    Uold.fill(Uguess2)
+
+    # Set Boundary condition
+
+    U[lenY-1,:] = Utop(x)
+    U[:1, :] = Ubottom
+    U[:, lenX-1] = Uright(y)
+
+    U[:, :1] = Uleft
+
+    #print("Please wait for a Analytic")
+    for i in range(0,lenY):
+        for j in range(0,lenX):
+            U1[i,j] = (i)*(j)/(a*b)*(a*b/((lenY-1)*(lenX-1)))
+            for n in range(1,95):
+                U1[i,j] = U1[i,j]+ (2*((-1)**n) * (b**2)/(np.pi* n*((b**2) + (n**2) * (np.pi**2)) ) * np.sinh(math.pi*n*(j)*a/(lenX-1)/b)) * math.sin(np.pi * n* (i)*b/(lenY-1)/b)/np.sinh(np.pi*n*a/b) + (2*((-1)**n) * (a**2)/(np.pi* n*(a**2 - n**2 * np.pi**2) ) * np.sinh(np.pi*n*(i)*b/(lenY-1)/a)) * np.sin(np.pi * n* (j)*a/(lenX-1)/a)/np.sinh(np.pi*n*b/a)
+    #print("Finished")
+    # Iteration (We assume that the iteration is convergence in maxIter = 500)
+    #print("Please wait for a moment")
+    #while np.all(abs(U - Uold))>tol:
+    start_time = time.time()
+    for interation in range(0,maxIter):
+        U[1:lenY-1,1:lenX-1] = 1/2 *(1/(((lenX-1)/a)**2 + ((lenY-1)/b)**2)) * ((U[2:,1:lenX-1] + U[:lenY-2,1:lenX-1])/(b/(lenY-1))**2 + (U[1:lenY-1,2:] + U[1:lenY-1,:lenX-2])/(a/(lenX-1))**2)
+    #print("Iteration finished")
+    timework = time.time() - start_time
+    ERROR[lenX-6] =  np.sqrt(np.sum(((U - U1)**2))/(lenX*lenY))
+    timey[lenX-6] = timework
+
+fig = plt.figure()
+ax = Axes3D(fig)
+
+# Configure the contour
+plt.title("Solution explicit method")
+#plt.contourf(X, Y, U, colorinterpolation, cmap=colourMap)
+ax.plot_surface(X, Y, U, rstride=1, cstride=1)
+
+
+# Set Colorbar
+#plt.colorbar()
+
+# Show the result in the plot window
+plt.show()
+
+
+fig = plt.figure()
+ax = Axes3D(fig)
+# Configure the contour
+plt.title("Solution analitic 1  ")
+#plt.contourf(X, Y, U1, colorinterpolation, cmap=colourMap)
+ax.plot_surface(X, Y, U1, rstride=1, cstride=1)
+# Set Colorbar
+#plt.colorbar()
+
+# Show the result in the plot window
+plt.show()
+
+
+
+#fig = plt.figure()
+#ax = Axes3D(fig)
+# Configure the contour
+#plt.title("Solution analitic ununderstanding  ")
+#plt.contourf(X, Y, U1, colorinterpolation, cmap=colourMap)
+#ax.plot_surface(X, Y, Una, rstride=1, cstride=1)
+# Set Colorbar
+#plt.colorbar()
+# Show the result in the plot window
+#plt.show()
+
+
+
+fig = plt.figure()
+ax = Axes3D(fig)
+
+# Configure the contour
+plt.title("ERROR")
+#plt.contourf(X, Y, U, colorinterpolation, cmap=colourMap)
+ax.plot_surface(X, Y, abs(U-U1), rstride=1, cstride=1)
+
+
+# Set Colorbar
+#plt.colorbar()
+
+# Show the result in the plot window
+plt.show()
+
+plt.title("ERROR from mersh step")
+plt.plot(ERRORx,ERROR)
+plt.show()
+
+plt.title("Timework from mersh step")
+plt.plot(timex,timey)
+plt.show()
+
+
+print("")
